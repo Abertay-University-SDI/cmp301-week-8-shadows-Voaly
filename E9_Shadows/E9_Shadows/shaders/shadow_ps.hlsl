@@ -66,6 +66,14 @@ float2 getProjectiveCoords(float4 lightViewPosition)
 float4 main(InputType input) : SV_TARGET
 {
     float shadowMapBias = 0.005f;
+
+    //Value used to cause shadow acne, this happens with a tiny shadow map bias
+    //float shadowMapBias = 0.000000005f;
+
+
+    //Value used to cause shadow separation, this happens with a big shadow map bias
+    //float shadowMapBias = 0.07f;
+
     float4 colour = float4(0.f, 0.f, 0.f, 1.f);
     float4 textureColour = shaderTexture.Sample(diffuseSampler, input.tex);
 
