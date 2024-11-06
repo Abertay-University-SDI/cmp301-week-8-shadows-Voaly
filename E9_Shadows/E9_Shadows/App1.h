@@ -41,6 +41,8 @@ private:
 	RenderTexture* renderTexture1;
 
 
+	float speed = 5.0f;
+
 };
 
 #endif

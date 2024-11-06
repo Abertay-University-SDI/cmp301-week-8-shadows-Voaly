@@ -106,8 +106,7 @@ void App1::depthPass()
 	// get the world, view, and projection matrices from the camera and d3d objects.
 	light->generateViewMatrix();
 	XMMATRIX lightViewMatrix = light->getViewMatrix();
-	//XMMATRIX lightProjectionMatrix = light->getOrthoMatrix();
-	XMMATRIX lightPerspectiveMatrix = light->getOrthoMatrix();
+	XMMATRIX lightProjectionMatrix = light->getOrthoMatrix();
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
 	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
@@ -180,6 +179,9 @@ void App1::finalPass()
 	textureShader->setShaderParameters(renderer->getDeviceContext(), XMMatrixIdentity(), orthoViewMatrix, orthoMatrix, shadowMap->getDepthMapSRV());
 	textureShader->render(renderer->getDeviceContext(), orthoMesh1->getIndexCount());
 	renderer->setZBuffer(true);
+
+
+	
 
 	gui();
 	renderer->endScene();
