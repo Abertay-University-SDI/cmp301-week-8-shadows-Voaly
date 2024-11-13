@@ -43,6 +43,11 @@ private:
 
 	float speed = 5.0f;
 
+
+	XMFLOAT3 positionOfLight = XMFLOAT3(0.0f, -0.7f, 0.7f);
+	XMFLOAT3 directionOfLight = XMFLOAT3(0.0f, 0.0f, -10.f);
+
+
 };
 
 #endif

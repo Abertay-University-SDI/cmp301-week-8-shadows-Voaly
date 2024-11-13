@@ -47,7 +47,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	light->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
 	light->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
 	light->setDirection(0.0f, -0.7f, 0.7f);
-	light->setPosition(0.f, 0.f, -10.f);
+	light->setPosition(0.0f, 0.0f, -10.f);
 	light->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
 
 
@@ -158,8 +158,7 @@ void App1::finalPass()
 	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, 
-		textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix,  textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
 	shadowShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	// Render model
@@ -181,9 +180,15 @@ void App1::finalPass()
 	renderer->setZBuffer(true);
 
 
+
+	light->setPosition(positionOfLight.x, positionOfLight.y, positionOfLight.z);
+	light->setDirection(directionOfLight.x, directionOfLight.y, directionOfLight.z);
 	
 
 	gui();
+	if (directionOfLight.z == 0.0f) {
+		directionOfLight.z = 1.0f;
+	}
 	renderer->endScene();
 }
 
@@ -199,6 +204,10 @@ void App1::gui()
 	// Build UI
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
+
+
+	ImGui::SliderFloat3("Light position: ", reinterpret_cast<float*>(&positionOfLight), -100.0f, 100.9f);
+	ImGui::SliderFloat3("Light direction: ", reinterpret_cast<float*>(&directionOfLight), -100.0f, 100.9f);
 
 	// Render UI
 	ImGui::Render();
