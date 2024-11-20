@@ -55,6 +55,10 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	renderTexture1 = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
+
+	deltaTime = new Timer();
+	timeSinceStart = 0.0f;
+
 }
 
 App1::~App1()
@@ -89,7 +93,7 @@ bool App1::frame()
 
 bool App1::render()
 {
-
+	timeSinceStart += timer->getTime();
 	// Perform depth pass
 	depthPass();
 	// Render scene
@@ -116,9 +120,21 @@ void App1::depthPass()
 	depthShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	worldMatrix = renderer->getWorldMatrix();
-	worldMatrix = XMMatrixTranslation(0.f, 7.f, 5.f);
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
+
+
+	//XMMATRIX rotationMatrix = XMMatrixRotationY(XMConvertToRadians(6.28318f + (timeSinceStart * 2000)));
+	//XMVECTOR vecTest = DirectX::XMVectorSet(0.0f, 0.0f, 6.28318f + (timeSinceStart * 2000), 1);
+	//XMVECTOR angleToQuanternion = XMQuaternionRotationRollPitchYawFromVector(vecTest);
+	//XMMATRIX rotationMatrix = XMQuaternionRotationRollPitchYawFromVector();
+	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 6.28318f + (timeSinceStart * 2000));
+	worldMatrix = XMMatrixMultiply(worldMatrix, rotationMatrix);
+	//worldMatrix *= XMMatrixRotationY(3.14159f + (timeSinceStart * 2000));
+	worldMatrix = XMMatrixTranslation(0.f, 7.f, 5.f);
+
+	
 	// Render model
 	model->sendData(renderer->getDeviceContext());
 	depthShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
@@ -146,6 +162,7 @@ void App1::firstPass()
 
 void App1::finalPass()
 {
+
 	// Clear the scene. (default blue colour)
 	renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
 	camera->update();
@@ -163,9 +180,17 @@ void App1::finalPass()
 
 	// Render model
 	worldMatrix = renderer->getWorldMatrix();
-	worldMatrix = XMMatrixTranslation(0.f, 7.f, 5.f);
+
+	//Scale the model
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
+
+
+	//Rotate the model
+	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(0.0f, 0.0f, XM_2PI + (timeSinceStart * 2000));
+	worldMatrix = XMMatrixMultiply(worldMatrix, rotationMatrix);
+	//worldMatrix *= XMMatrixRotationY(3.14159f + (timeSinceStart * 2000));
+	worldMatrix = XMMatrixTranslation(0.f, 7.f, 5.f);
 	model->sendData(renderer->getDeviceContext());
 	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
 	shadowShader->render(renderer->getDeviceContext(), model->getIndexCount());

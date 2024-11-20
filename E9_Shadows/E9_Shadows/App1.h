@@ -48,6 +48,17 @@ private:
 	XMFLOAT3 directionOfLight = XMFLOAT3(0.0f, 0.0f, -10.f);
 
 
+	Timer* deltaTime;
+
+
+	float timeSinceStart;
+
+
+
+	
+
+
+
 };
 
 #endif
